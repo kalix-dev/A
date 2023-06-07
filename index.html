@@ -68,7 +68,12 @@
           for (var prop in data[key]) {
             if (data[key].hasOwnProperty(prop)) {
               var tableDataCell = document.createElement('td');
-              tableDataCell.textContent = data[key][prop];
+              // Check if the value is an object (nested properties)
+              if (typeof data[key][prop] === 'object') {
+                tableDataCell.textContent = JSON.stringify(data[key][prop]);
+              } else {
+                tableDataCell.textContent = data[key][prop];
+              }
               tableDataRow.appendChild(tableDataCell);
             }
           }
