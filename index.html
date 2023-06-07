@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Realtime Database</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Firebase Realtime Database</h1>
+  <div id="tables-container"></div>
+
+  <script>
+    // Initialize Firebase
+    var firebaseConfig = {
+      // Your Firebase project configuration
+      apiKey: "AIzaSyA9aeIFnYrQ9UXIUJS0RsPUbgljfinQdQ0",
+  authDomain: "a2za2za2z1.firebaseapp.com",
+  databaseURL: "https://a2za2za2z1-default-rtdb.firebaseio.com",
+  projectId: "a2za2za2z1",
+  storageBucket: "a2za2za2z1.appspot.com",
+  messagingSenderId: "1092163255405",
+  appId: "1:1092163255405:web:702ceabc4045e853ce5364"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // Retrieve the data from the Firebase Realtime Database
+    var database = firebase.database();
+    var ref = database.ref('/');
+    ref.on('value', function(snapshot) {
+      var data = snapshot.val();
+      var tablesContainer = document.getElementById('tables-container');
+
+      // Create tables for each key in the data object
+      for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+          var table = document.createElement('table');
+          var tableCaption = document.createElement('caption');
+          tableCaption.textContent = key;
+          table.appendChild(tableCaption);
+
+          var tableHeader = document.createElement('thead');
+          var tableHeaderRow = document.createElement('tr');
+          for (var prop in data[key]) {
+            if (data[key].hasOwnProperty(prop)) {
+              var tableHeaderCell = document.createElement('th');
+              tableHeaderCell.textContent = prop;
+              tableHeaderRow.appendChild(tableHeaderCell);
+            }
+          }
+          tableHeader.appendChild(tableHeaderRow);
+          table.appendChild(tableHeader);
+
+          var tableBody = document.createElement('tbody');
+          var tableDataRow = document.createElement('tr');
+          for (var prop in data[key]) {
+            if (data[key].hasOwnProperty(prop)) {
+              var tableDataCell = document.createElement('td');
+              tableDataCell.textContent = data[key][prop];
+              tableDataRow.appendChild(tableDataCell);
+            }
+          }
+          tableBody.appendChild(tableDataRow);
+          table.appendChild(tableBody);
+
+          tablesContainer.appendChild(table);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
