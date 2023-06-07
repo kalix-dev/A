@@ -7,20 +7,30 @@
       border-collapse: collapse;
       width: 100%;
     }
-
     th, td {
-      border: 1px solid #dddddd;
-      text-align: left;
       padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
 </head>
 <body>
-  <h1>Firebase Realtime Database</h1>
-  <div id="tables-container"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Profile Pic</th>
+        <th>Email</th>
+        <th>Username</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody"></tbody>
+  </table>
 
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
   <script>
     // Initialize Firebase
     var firebaseConfig = {
@@ -33,56 +43,31 @@
   messagingSenderId: "1092163255405",
   appId: "1:1092163255405:web:702ceabc4045e853ce5364"
     };
-
     firebase.initializeApp(firebaseConfig);
 
-    // Retrieve the data from the Firebase Realtime Database
+    // Get a reference to the database
     var database = firebase.database();
-    var ref = database.ref('/');
-    ref.on('value', function(snapshot) {
-      var data = snapshot.val();
-      var tablesContainer = document.getElementById('tables-container');
 
-      // Create tables for each key in the data object
-      for (var key in data) {
-        if (data.hasOwnProperty(key)) {
-          var table = document.createElement('table');
-          var tableCaption = document.createElement('caption');
-          tableCaption.textContent = key;
-          table.appendChild(tableCaption);
+    // Retrieve "users" data from Firebase Realtime Database
+    var usersRef = database.ref('users');
+    usersRef.once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        var user = childSnapshot.val();
+        var profilePic = user.pic;
+        var email = user.u;
+        var username = user.username;
 
-          var tableHeader = document.createElement('thead');
-          var tableHeaderRow = document.createElement('tr');
-          for (var prop in data[key]) {
-            if (data[key].hasOwnProperty(prop)) {
-              var tableHeaderCell = document.createElement('th');
-              tableHeaderCell.textContent = prop;
-              tableHeaderRow.appendChild(tableHeaderCell);
-            }
-          }
-          tableHeader.appendChild(tableHeaderRow);
-          table.appendChild(tableHeader);
+        // Add data to the table
+        var tableBody = document.getElementById('userTableBody');
+        var newRow = tableBody.insertRow();
+        var picCell = newRow.insertCell();
+        var emailCell = newRow.insertCell();
+        var usernameCell = newRow.insertCell();
 
-          var tableBody = document.createElement('tbody');
-          var tableDataRow = document.createElement('tr');
-          for (var prop in data[key]) {
-            if (data[key].hasOwnProperty(prop)) {
-              var tableDataCell = document.createElement('td');
-              // Check if the value is an object (nested properties)
-              if (typeof data[key][prop] === 'object') {
-                tableDataCell.textContent = JSON.stringify(data[key][prop]);
-              } else {
-                tableDataCell.textContent = data[key][prop];
-              }
-              tableDataRow.appendChild(tableDataCell);
-            }
-          }
-          tableBody.appendChild(tableDataRow);
-          table.appendChild(tableBody);
-
-          tablesContainer.appendChild(table);
-        }
-      }
+        picCell.innerHTML = '<img src="' + profilePic + '" alt="Profile Pic" width="50" height="50">';
+        emailCell.textContent = email;
+        usernameCell.textContent = username;
+      });
     });
   </script>
 </body>
